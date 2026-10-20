@@ -5,7 +5,8 @@ const model = new ChatGoogle({
   apiKey: process.env.GOOGLE_API_KEY,
 });
 
-export async function testAi(){
-    model.invoke("what is capital of india")
-    .then((res)=>{console.log(res.text)})
+export async function testAi(){  
+const res =  await model.invoke("what was my first message")
+console.log(res.text)
+    
 }

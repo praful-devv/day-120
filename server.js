@@ -12,7 +12,7 @@ const io = new Server(httpServer, {});
 io.on("connection", () => {
   console.log("user connected");
 });
-testAi()
+testAi()  
 connectToDb();
 
 httpServer.listen(3000);
