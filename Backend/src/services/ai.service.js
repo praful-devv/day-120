@@ -33,5 +33,5 @@ export async function testAi() {
       },
     ],
   });
-  console.log(res);
+  return res
 }
