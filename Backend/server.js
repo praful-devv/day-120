@@ -5,14 +5,12 @@ import { createServer } from "http";
 import { Server } from "socket.io";
 import connectToDb from "./src/config/db.js";
 import { testAi } from "./src/services/ai.service.js";
+import { initSocket } from "./src/sockets/server.socket.js";
 const httpServer = createServer(app);
 
-const io = new Server(httpServer, {});
+initSocket(httpServer)
 
-io.on("connection", () => {
-  console.log("user connected");
-});
-testAi()  
+  
 connectToDb();
 
 httpServer.listen(3000);

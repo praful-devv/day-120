@@ -1,5 +1,5 @@
 import { useForm } from "react-hook-form";
-import { LoginThunk } from "../states/authThunkSlice";
+import { LoginThunk, RegisterThunk } from "../states/authThunkSlice";
 import { useSelector, useDispatch } from "react-redux";
 
 const authHook = () => {
@@ -16,7 +16,7 @@ const authHook = () => {
     } = useForm();
 
     function OnRegister(data){
-        console.log(data)
+        dispatch(RegisterThunk(data));
     }
 
   async function OnLogin(data){

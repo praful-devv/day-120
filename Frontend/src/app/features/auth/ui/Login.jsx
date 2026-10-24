@@ -35,7 +35,7 @@ export default function Login() {
 
         <div className="flex flex-col">
           <label htmlFor="password" className="text-xl">
-            password
+            Password
           </label>
           <input
             id="password"

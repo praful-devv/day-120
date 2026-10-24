@@ -14,7 +14,7 @@ export default function Register() {
       >
         <div className="flex flex-col">
           <label htmlFor="username" className="text-xl">
-            username
+            Username
           </label>
           <input
             id="username"
@@ -58,7 +58,7 @@ export default function Register() {
 
         <div className="flex flex-col">
           <label htmlFor="password" className="text-xl">
-            password
+            Password
           </label>
           <input
             id="password"
@@ -78,7 +78,7 @@ export default function Register() {
             )}
           </p>
         </div>
-        <button className="bg-green-500 px-4 py-2 rounded-xl">Login</button>
+        <button className="bg-green-500 px-4 py-2 rounded-xl">Register</button>
 
         <p>
           Don't have an account?{" "}

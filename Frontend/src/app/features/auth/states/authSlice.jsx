@@ -24,7 +24,6 @@ const authSlice = createSlice({
             state.isLoading = true;
           })
           .addCase(RegisterThunk.fulfilled, (state, action) => {
-            state.user = action.payload;
             state.isLoading = false;
           })
           .addCase(RegisterThunk.rejected, (state) => {
