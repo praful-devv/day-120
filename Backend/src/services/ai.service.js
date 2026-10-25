@@ -1,10 +1,17 @@
 import { ChatGoogle } from "@langchain/google/node";
-import { createAgent, tool } from "langchain";
+
+import {
+  createAgent,
+  tool,
+  SystemMessage,
+  HumanMessage,
+  AIMessage,
+} from "langchain";
 import { sendEmail } from "./mail.service.js";
 import * as z from "zod";
 
 const model = new ChatGoogle({
-  model: "gemini-3.7-flash",
+  model: "gemini-3.6-flash",
   apiKey: process.env.GOOGLE_API_KEY,
 });
 
@@ -23,15 +30,26 @@ const agent = createAgent({
   tools: [emailtool],
 });
 
-export async function testAi() {
-  const res = await agent.invoke({
-    messages: [
-      {
-        role: "user",
-        content:
-          "send email to prafulanilwankhade3010@gmail.com and send about how to land fullstck developer job at big companies ",
-      },
-    ],
-  });
-  return res
+export async function generateResponse(messages) {
+  const res = await model.invoke(
+    messages.map((msg) => {
+      if (msg.roles == "user") {
+        return new HumanMessage(msg.content);
+      } else if (msg.roles == "ai") {
+        return new AIMessage(msg.content);
+      }
+    }),
+  );
+  return res.text;
+}
+
+export async function generateChatTitle(message) {
+  const response = await model.invoke([
+    new SystemMessage(
+      "you are helpfull assistant that generates the title for chat conversation.based on user first message you generate hte title of chat conversation",
+    ),
+    new HumanMessage(message),
+  ]);
+
+  return response.text;
 }
