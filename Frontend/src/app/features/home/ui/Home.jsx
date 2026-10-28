@@ -1,16 +1,23 @@
 import { useEffect, useState } from "react";
 import useChat from "../hooks/useChat";
 import { useSelector } from "react-redux";
+import ReactMarkdown from "react-markdown";
 
 const Home = () => {
-  const [message, setmessage] = useState("");
+  const [message, setMessage] = useState("");
 
-  const { initializedSocketConnection, handleSendMessage } = useChat();
+  const {
+    initializedSocketConnection,
+    handleSendMessage,
+    handleGetchats,
+    handleopenchat,
+  } = useChat();
 
   const { chats, currentChatId } = useSelector((store) => store.chat);
 
   useEffect(() => {
     initializedSocketConnection();
+    handleGetchats();
   }, []);
 
   const handleSubmit = (e) => {
@@ -23,30 +30,51 @@ const Home = () => {
       chatId: currentChatId,
     });
 
-    setmessage("");
+    setMessage("");
   };
 
+  const openchat =(chatid)=>{
+    handleopenchat(chatid)
+  }
+
   return (
-    <main className="h-screen grid grid-cols-[1fr_5fr] ">
-      <aside className="bg-gray-100 hidden md:flex border-r border-s-gray-500">
-        d
+    <main className="grid h-dvh min-h-0 grid-cols-[1fr_5fr] overflow-hidden">
+      <aside className="hidden min-h-0 flex-col overflow-y-auto border-r border-s-gray-500 bg-gray-100 md:flex">
+        {Object.values(chats).map((chat, index) => (
+          <button
+            onClick={() => openchat(chat.id)}
+            className="rounded border cursor-pointer px-3 py-2 text-left text-black"
+            key={chat.id ?? index}
+            type="button"
+          >
+            {chat.title}
+          </button>
+        ))}
       </aside>
 
-      <section className="flex flex-col w-screen md:w-auto  overflow-auto">
-        <div className="grow bg-gray-100  overflow-auto">
-          {chats[currentChatId]?.message?.map((message) => {
+      <section className="flex  flex-col overflow-hidden w-screen md:w-full">
+        <div className="min-h-0 min-w-0 grow overflow-y-auto overflow-x-hidden bg-gray-100">
+          {chats[currentChatId]?.message?.map((chatMessage, index) => {
+            const isUserMessage = chatMessage.role === "user";
+
             return (
               <div
-                key={message.id}
-                className={`w-fit  rounded text-sm md:text-md ${message.role === "user" ? "ml-auto rounded-br-none bg-white/12 text-white" : "mr-auto border border-white/25 "}
-
-            `}
+                key={chatMessage.id ?? `${chatMessage.role}-${index}`}
+                className={`my-2 w-fit max-w-[90%] break-words rounded text-sm md:text-md ${
+                  isUserMessage
+                    ? "ml-auto rounded-br-none bg-white/12 text-white"
+                    : "mr-auto border border-white/25"
+                }`}
               >
-                <p
-                  className={`text-black bg-gray-500 p-2 m-2 w-fit rounded-2xl`}
-                >
-                  {message.content}
-                </p>
+                {isUserMessage ? (
+                  <p className="m-2 w-fit max-w-full whitespace-pre-wrap rounded-2xl bg-gray-500 p-2 text-black">
+                    {chatMessage.content}
+                  </p>
+                ) : (
+                  <div className="markdown-content m-2 max-w-full overflow-x-auto break-words rounded-2xl bg-gray-500 p-2 text-black">
+                    <ReactMarkdown>{chatMessage.content}</ReactMarkdown>
+                  </div>
+                )}
               </div>
             );
           })}
@@ -54,16 +82,18 @@ const Home = () => {
 
         <form
           onSubmit={handleSubmit}
-          className="h-30 flex justify-center items-center bg-gray-100 p-4 gap-4"
+          className="flex shrink-0 items-center justify-center gap-4  bg-gray-100 p-4"
         >
           <input
-            onChange={(e) => setmessage(e.target.value)}
+            onChange={(e) => setMessage(e.target.value)}
             value={message}
             type="text"
-            className="border w-120 h-fit p-2 rounded-2xl "
+            className="h-fit  w-full max-w-[30rem] rounded-2xl border p-2"
             placeholder="Ask"
           />
-          <button>Send</button>
+          <button type="submit" className="shrink-0">
+            Send
+          </button>
         </form>
       </section>
     </main>

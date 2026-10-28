@@ -12,7 +12,7 @@ export const getChat = async () => {
 };
 
 export const getMessages = async (chatId) => {
-  const response = await Api.get(`/${chatId}/messages`);
+  const response = await Api.get(`/chat/${chatId}/messages`);
 
   return response.data;
 };

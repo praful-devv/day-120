@@ -5,12 +5,21 @@ import { generateChatTitle, generateResponse } from "../services/ai.service.js";
 export const messageController = async (req, res, next) => {
   const { message, chatId } = req.body;
 
-  let title,
-    chat = null;
+  let chat;
 
-  if (!chatId) {
-    title = await generateChatTitle(message);
+  if (chatId) {
+    chat = await chatModel.findOne({
+      _id: chatId,
+      user: req.user.id,
+    });
 
+    if (!chat) {
+      return res.status(404).json({
+        message: "chat not found",
+      });
+    }
+  } else {
+    const title = await generateChatTitle(message);
     chat = await chatModel.create({
       user: req.user.id,
       title,
@@ -18,23 +27,23 @@ export const messageController = async (req, res, next) => {
   }
 
   const usermessage = await messageModel.create({
-    chat: chatId || chat._id,
+    chat: chat._id,
     content: message,
     roles: "user",
   });
 
-  const messages = await messageModel.find({ chat: chatId || chat._id });
+  const messages = await messageModel.find({ chat: chat._id });
 
   const result = await generateResponse(messages);
 
   const aimessage = await messageModel.create({
-    chat: chatId || chat._id,
+    chat: chat._id,
     content: result,
     roles: "ai",
   });
 
   res.status(201).json({
-    title,
+    title: chat.title,
     chat,
     aimessage,
     messages,
