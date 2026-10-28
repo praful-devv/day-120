@@ -2,7 +2,7 @@ import { Api } from "../../../../config/axios";
 
 export const sendMessage = async ({ message, chatId }) => {
   const response = await Api.post("/chat/message", { message, chatId });
-
+  console.log(response.data)
   return response.data;
 };
 

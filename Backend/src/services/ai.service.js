@@ -11,7 +11,7 @@ import { sendEmail } from "./mail.service.js";
 import * as z from "zod";
 
 const model = new ChatGoogle({
-  model: "gemini-3.6-flash",
+  model: "gemini-3.5-flash-lite",
   apiKey: process.env.GOOGLE_API_KEY,
 });
 

@@ -3,18 +3,15 @@ import useChat from "../hooks/useChat";
 import { useSelector } from "react-redux";
 
 const Home = () => {
-
-  const [message,setmessage] = useState("")
+  const [message, setmessage] = useState("");
 
   const { initializedSocketConnection, handleSendMessage } = useChat();
 
   const { chats, currentChatId } = useSelector((store) => store.chat);
 
-  console.log(chats)
-
   useEffect(() => {
     initializedSocketConnection();
-  },[]);
+  }, []);
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -36,16 +33,20 @@ const Home = () => {
       </aside>
 
       <section className="flex flex-col w-screen md:w-auto  overflow-auto">
-        <div className="grow bg-gray-100 overflow-auto">
-          {chats[currentChatId]?.map((message) => {
+        <div className="grow bg-gray-100  overflow-auto">
+          {chats[currentChatId]?.message?.map((message) => {
             return (
               <div
                 key={message.id}
-                className={`w-fit rounded text-sm md:text-md ${message.role === "user" ? "ml-auto rounded-br-none bg-white/12 text-white" : "mr-auto border border-white/25 bg-[#0f1626]"}
+                className={`w-fit  rounded text-sm md:text-md ${message.role === "user" ? "ml-auto rounded-br-none bg-white/12 text-white" : "mr-auto border border-white/25 "}
 
             `}
               >
-                <p>{message.content}</p>
+                <p
+                  className={`text-black bg-gray-500 p-2 m-2 w-fit rounded-2xl`}
+                >
+                  {message.content}
+                </p>
               </div>
             );
           })}
