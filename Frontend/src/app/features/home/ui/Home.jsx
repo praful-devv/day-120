@@ -13,24 +13,26 @@ const Home = () => {
     handleopenchat,
   } = useChat();
 
-  const { chats, currentChatId } = useSelector((store) => store.chat);
+  const { chats, currentChatId, isLoading, error } = useSelector(
+    (store) => store.chat,
+  );
 
   useEffect(() => {
     initializedSocketConnection();
     handleGetchats();
   }, []);
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
 
     if (!message.trim()) return;
 
-    handleSendMessage({
+    const sent = await handleSendMessage({
       message: message,
       chatId: currentChatId,
     });
 
-    setMessage("");
+    if (sent) setMessage("");
   };
 
   const openchat =(chatid)=>{
@@ -54,12 +56,15 @@ const Home = () => {
 
       <section className="flex  flex-col overflow-hidden w-screen md:w-full">
         <div className="min-h-0 min-w-0 grow overflow-y-auto overflow-x-hidden bg-gray-100">
-          {chats[currentChatId]?.message?.map((chatMessage, index) => {
-            const isUserMessage = chatMessage.role === "user";
+          {(chats[currentChatId]?.message ?? []).map((chatMessage, index) => {
+            if (!chatMessage || typeof chatMessage !== "object") return null;
+
+            const role = chatMessage?.role;
+            const isUserMessage = role === "user";
 
             return (
               <div
-                key={chatMessage.id ?? `${chatMessage.role}-${index}`}
+                key={chatMessage.id ?? `${role ?? "message"}-${index}`}
                 className={`my-2 w-fit max-w-[90%] break-words rounded text-sm md:text-md ${
                   isUserMessage
                     ? "ml-auto rounded-br-none bg-white/12 text-white"
@@ -91,10 +96,15 @@ const Home = () => {
             className="h-fit  w-full max-w-[30rem] rounded-2xl border p-2"
             placeholder="Ask"
           />
-          <button type="submit" className="shrink-0">
-            Send
+          <button type="submit" className="shrink-0" disabled={isLoading}>
+            {isLoading ? "Sending..." : "Send"}
           </button>
         </form>
+        {error && (
+          <p className="px-4 pb-3 text-center text-red-600" role="alert">
+            {error}
+          </p>
+        )}
       </section>
     </main>
   );

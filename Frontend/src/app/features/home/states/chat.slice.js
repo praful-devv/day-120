@@ -36,7 +36,7 @@ const chatSlice = createSlice({
       state.isLoading = action.payload;
     },
     setError: (state, action) => {
-      state.error = action.error;
+      state.error = action.payload;
     },
   },
 });
